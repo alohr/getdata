@@ -88,11 +88,22 @@ head(featurelist, 10)
 ```
 
 From this I create a vector suitable for read.tables's colClasses argument to tell read.table which columns to include and
-which columns to ignore. A value of 'NULL' instructs read.table to skip the column.
+which columns to ignore. A value of 'NULL' instructs read.table to skip the column. So, for the first 10 features above, I
+could use a colClasses vector like so
 
+```R
+myColClasses <- c('numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'numeric', 'NULL', 'NULL', 'NULL', 'NULL')
 ```
+
+This would read the first 6 columns and skip the remaining 4. Now I create this myColClasses vector programmatically for the
+561 features by searching for "mean()" and "std()" in the feature names using grepl() and ifelse().
+
+```R
 head(grepl("mean\\(\\)|std\\(\\)", featurelist$feature, perl=T), 10)
  [1]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE
+
+head(ifelse(grepl("mean\\(\\)|std\\(\\)", featurelist$feature, perl=T), 'numeric', 'NULL'), 10)
+ [1] "numeric" "numeric" "numeric" "numeric" "numeric" "numeric" "NULL"    "NULL"    "NULL"    "NULL"   
 ```
 
 ```R
