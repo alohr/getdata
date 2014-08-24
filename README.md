@@ -24,9 +24,17 @@ drwxr-xr-x@ 11 alohr  staff       374 Nov 29  2012 Inertial Signals
 
 The data set is split into a training set (70%, 21 subjects) and a test set (30%, 7 subjects).
 
+# R libraries
+
+Please install the plyr package.
+
+```R
+install.packages("plyr")
+```
+
 # Transformation
 
-1. Subject
+## Subject
 
 The subject_train.txt and subject_test.txt files contain a single integer identifying the
 subject who performed the activities. The number runs from 1 to 30. I use read.table to
@@ -36,7 +44,7 @@ read this in.
 subject <- read.table(subjectfile, col.names = c('subject'), colClasses = c('factor'))
 ```
 
-2. Activities
+## Activities
 
 The y_train.txt and y_test.txt files contain an index of the activity. I will use the activity_labels.txt
 file to map the activity index to a descriptive name.
@@ -58,7 +66,7 @@ activity <- merge(
     activitylabels)[, 'activity']
 ```
 
-3. Features
+## Features
 
 The X_train.txt and X_test.txt files contain the feature normalized (bounded witin [-1, 1]) gyroscope
 and accelerometer variables. There are 561 variables in the feature vector, but we are asked to extract
@@ -89,8 +97,30 @@ head(grepl("mean\\(\\)|std\\(\\)", featurelist$feature, perl=T), 10)
 
 ```R
 myColClasses <- ifelse(grepl("mean\\(\\)|std\\(\\)", featurelist$feature, perl=T), 'numeric', 'NULL')
-
+myColNames <- gsub("[\\(\\)]", "", featurelist$feature) # strip unwanted characters
+  
 features <- read.table(featurefile,
-    col.names = gsub("[\\(\\)]", "", featurelist$feature), # strip unwanted characters
+    col.names = myColNames,
     colClasses = myColClasses)
+```
+
+## Merging training and test data sets
+
+I put the previous steps in a function and pass a parameter to this function to specify the set (i.e. "train" and "test").
+Finally I concatenate the results for "train" and "test" with rbind().
+
+## Averaging
+
+Each row in the dataframe so far looks like:
+
+```
+subject, activity, feature1, feature2, ..., featureN
+```
+
+To average all feature variables by subject and activity I use the ddply() and numcolwise() functions from
+the plyr package.
+
+```R
+# use numcolwise() to run a summary over all numeric columns
+tidy <- ddply(data, .(subject, activity), numcolwise(mean))
 ```
