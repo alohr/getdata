@@ -61,14 +61,8 @@ activity <- merge(
 3. Features
 
 The X_train.txt and X_test.txt files contain the feature normalized (bounded witin [-1, 1]) gyroscope
-and accelerometer variables. Note, "feature" and "feature scaling (normalization) are machine learning terms,
-see
-
-http://en.wikipedia.org/wiki/Feature_(machine_learning)
-http://en.wikipedia.org/wiki/Feature_scaling
-
-There are 561 variables in the feature vector, but we are asked to extract the mean and std variables only. I
-start by reading the features.txt file into a dataframe
+and accelerometer variables. There are 561 variables in the feature vector, but we are asked to extract
+the mean and std variables only. I start by reading the features.txt file into a dataframe
 
 ```R
 head(featurelist, 10)
